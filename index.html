@@ -12,17 +12,41 @@
 </head>
 <body>
 
-    <div id="rules">
-        <h2>Reglas del Juego</h2>
-        <ul>
-            <li>Utiliza el mouse para mover la serpiente.</li>
-            <li>La serpiente crece cada vez que come la comida.</li>
-            <li>Evita chocar con los bordes del tablero o contigo mismo.</li>
-            <li>El juego termina si la serpiente choca contra un borde o contra sí misma.</li>
-            <li>El objetivo es obtener la mayor puntuación posible.</li>
-        </ul>
+    <!-- Modal para ingresar nombre -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <h2>Ingrese su nombre</h2>
+            <input type="text" id="playerName" placeholder="Nombre del jugador" />
+            <div id="warning" class="warning"></div>
+            <button id="submitName">Continuar</button>
+        </div>
     </div>
 
+    <!-- Modal para reglas y opciones de control -->
+    <div id="rulesAndControls" class="modal">
+        <div class="modal-content">
+            <h2>Reglas del Juego</h2>
+            <ul>
+                <li>Utiliza el mouse o el teclado para mover la serpiente.</li>
+                <li>La serpiente crece cada vez que come la comida.</li>
+                <li>Evita chocar con los bordes del tablero o contigo mismo.</li>
+                <li>El juego termina si la serpiente choca contra un borde o contra sí misma.</li>
+                <li>El objetivo es obtener la mayor puntuación posible.</li>
+            </ul>
+            <h3>Selecciona el método de control</h3>
+            <div class="radio-group">
+                <label>
+                    <input type="radio" name="controlMethod" value="keyboard" checked> Teclado
+                </label>
+                <label>
+                    <input type="radio" name="controlMethod" value="mouse"> Mouse
+                </label>
+            </div>
+            <button id="continueButton">Continuar</button>
+        </div>
+    </div>
+
+    <!-- Tablero de juego -->
     <div id="board"></div>
     <div class="boardInfo">
         <div>
@@ -31,6 +55,10 @@
         <button id="start">Start</button>
     </div>
     <div id="gameOver">Game Over</div>
-    
+    <div id="gameOverInfo">
+        <p id="finalScore"></p>
+        <button id="restart">Restart</button>
+    </div>
+
 </body>
 </html>

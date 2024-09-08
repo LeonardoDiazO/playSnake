@@ -3,12 +3,21 @@ const board = document.getElementById('board');
 const scoreBoard = document.getElementById('scoreBoard');
 const startButton = document.getElementById('start');
 const gameOverSign = document.getElementById('gameOver');
+const userModal = document.getElementById('userModal');
+const playerNameInput = document.getElementById('playerName');
+const submitNameButton = document.getElementById('submitName');
+const warning = document.getElementById('warning');
+const gameOverInfo = document.getElementById('gameOverInfo');
+const finalScore = document.getElementById('finalScore');
+const restartButton = document.getElementById('restart');
+const rulesAndControls = document.getElementById('rulesAndControls');
+const continueButton = document.getElementById('continueButton');
 
 // Game settings
 const boardSize = 10;
-let initialGameSpeed = 200;  // Velocidad inicial (más lenta)
-let speedIncrement = 10;     // Aumento de velocidad en cada incremento
-const maxGameSpeed = 50;     // Velocidad máxima (muy rápida)
+let initialGameSpeed = 200;
+let speedIncrement = 10;
+const maxGameSpeed = 50;
 const squareTypes = {
     emptySquare: 0,
     snakeSquare: 1,
@@ -28,17 +37,14 @@ let direction;
 let boardSquares;
 let emptySquares;
 let moveInterval;
-let gameSpeed;  // La velocidad actual del juego
-
-// Variables para el mouse
-let lastMousePosition = { x: 0, y: 0 };
-let currentMousePosition = { x: 0, y: 0 };
+let gameSpeed;
+let playerName = '';
+let controlMethod = 'keyboard'; // Default control method
 
 const drawSnake = () => {
     snake.forEach(square => drawSquare(square, 'snakeSquare'));
 }
 
-// Rellena cada cuadrado del tablero 
 const drawSquare = (square, type) => {
     const [row, column] = square.split('');
     boardSquares[row][column] = squareTypes[type];
@@ -82,14 +88,19 @@ const addFood = () => {
     score++;
     updateScore();
     createRandonFood();
-    increaseSpeed();  // Aumentar la velocidad cada vez que coma
+    increaseSpeed();
 }
 
 const gameOver = () => {
-    gameOverSign.style.display = 'flex';
+    gameOverSign.style.display = 'none';
+    gameOverInfo.style.display = 'flex';
+    finalScore.innerText = `Game Over! ${playerName}, tu puntuación es ${score}`;
     clearInterval(moveInterval);
     startButton.disabled = false;
-    document.removeEventListener('mousemove', handleMouseMove);  // Removemos el evento del mouse al final del juego
+
+    // Guardar resultado en localStorage
+    saveScore();
+    document.removeEventListener('mousemove', handleMouseMove);
 }
 
 const setDirection = newDirection => {
@@ -104,23 +115,19 @@ const handleMouseMove = (event) => {
 
     if (Math.abs(deltaX) > Math.abs(deltaY)) {
         if (deltaX > 0) {
-            // Movimiento hacia la derecha
             direction !== 'ArrowLeft' && setDirection('ArrowRight');
         } else {
-            // Movimiento hacia la izquierda
             direction !== 'ArrowRight' && setDirection('ArrowLeft');
         }
     } else {
         if (deltaY > 0) {
-            // Movimiento hacia abajo
             direction !== 'ArrowUp' && setDirection('ArrowDown');
         } else {
-            // Movimiento hacia arriba
             direction !== 'ArrowDown' && setDirection('ArrowUp');
         }
     }
 
-    lastMousePosition = { ...currentMousePosition };
+    lastMousePosition = currentMousePosition;
 }
 
 const createRandonFood = () => {
@@ -134,8 +141,8 @@ const updateScore = () => {
 
 const createBoard = () => {
     boardSquares.forEach((row, rowIndex) => {
-        row.forEach((column, columnndex) => {
-            const squareValue = `${rowIndex}${columnndex}`;
+        row.forEach((column, columnIndex) => {
+            const squareValue = `${rowIndex}${columnIndex}`;
             const squareElement = document.createElement('div');
             squareElement.setAttribute('class', 'square emptySquare');
             squareElement.setAttribute('id', squareValue);
@@ -150,30 +157,68 @@ const setGame = () => {
     score = snake.length;
     direction = 'ArrowRight';
     boardSquares = Array.from(Array(boardSize), () => new Array(boardSize).fill(squareTypes.emptySquare));
+    console.log(boardSquares);
     board.innerHTML = '';
     emptySquares = [];
-    gameSpeed = initialGameSpeed;  // Iniciar con la velocidad inicial
     createBoard();
 }
 
 const startGame = () => {
+    if (!playerName) {
+        warning.innerText = 'Por favor, ingrese su nombre para continuar.';
+        return;
+    }
+
+    userModal.style.display = 'none';
+    rulesAndControls.style.display = 'flex';
+}
+
+const continueGame = () => {
+    const controlMethodRadio = document.querySelector('input[name="controlMethod"]:checked');
+    controlMethod = controlMethodRadio.value;
+
+    rulesAndControls.style.display = 'none';
+    startButton.style.display = 'block';
     setGame();
-    gameOverSign.style.display = 'none';
-    startButton.disabled = true;
+}
+
+const startActualGame = () => {
+    startButton.style.display = 'none';
     drawSnake();
     updateScore();
     createRandonFood();
-    document.addEventListener('mousemove', handleMouseMove);  // Agregar evento del mouse
+    document.addEventListener('mousemove', handleMouseMove);
     moveInterval = setInterval(() => moveSnake(), gameSpeed);
 }
 
-// Función para incrementar la velocidad del juego
-const increaseSpeed = () => {
-    if (gameSpeed > maxGameSpeed) {  // Limitar la velocidad máxima
-        gameSpeed -= speedIncrement;  // Aumentar la velocidad (reducir el intervalo)
-        clearInterval(moveInterval);  // Limpiar el intervalo actual
-        moveInterval = setInterval(() => moveSnake(), gameSpeed);  // Iniciar el nuevo intervalo con la velocidad incrementada
-    }
+const saveScore = () => {
+    const scores = JSON.parse(localStorage.getItem('snakeScores')) || [];
+    scores.push({ name: playerName, score });
+    localStorage.setItem('snakeScores', JSON.stringify(scores));
 }
 
-startButton.addEventListener('click', startGame);
+const increaseSpeed = () => {
+    gameSpeed = Math.max(maxGameSpeed, initialGameSpeed - (score - 4) * speedIncrement);
+    clearInterval(moveInterval);
+    moveInterval = setInterval(() => moveSnake(), gameSpeed);
+}
+
+submitNameButton.addEventListener('click', () => {
+    playerName = playerNameInput.value.trim();
+    startGame();
+});
+
+continueButton.addEventListener('click', () => {
+    continueGame();
+});
+
+startButton.addEventListener('click', () => {
+    startActualGame();
+});
+
+restartButton.addEventListener('click', () => {
+    gameOverInfo.style.display = 'none';
+    userModal.style.display = 'flex';
+    playerNameInput.value = '';
+    warning.innerText = '';
+});
