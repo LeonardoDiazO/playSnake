@@ -5,21 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snake</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <script src="script.js" defer></script> // defer nos ayuda a cargar el script 
+    <script src="script.js" defer></script> 
 </head>
 <body>
 
+    <div id="rules">
+        <h2>Reglas del Juego</h2>
+        <ul>
+            <li>Utiliza el mouse para mover la serpiente.</li>
+            <li>La serpiente crece cada vez que come la comida.</li>
+            <li>Evita chocar con los bordes del tablero o contigo mismo.</li>
+            <li>El juego termina si la serpiente choca contra un borde o contra sí misma.</li>
+            <li>El objetivo es obtener la mayor puntuación posible.</li>
+        </ul>
+    </div>
+
     <div id="board"></div>
-        <div class="boarInfo">
-            <div>
-                Score: <div id="scoreBoard"></div>
-            </div>
-            <button id="start">Start</button>
+    <div class="boardInfo">
+        <div>
+            Score: <div id="scoreBoard"></div>
         </div>
-        <div id="gameOver">Game Over</div>
-        
+        <button id="start">Start</button>
+    </div>
+    <div id="gameOver">Game Over</div>
+    
 </body>
 </html>

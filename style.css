@@ -9,10 +9,23 @@
 #board {
     display: grid;
     grid-template-columns: repeat(10, 1fr);
+    position: relative; /* Para poder posicionar el #gameOver dentro del board */
 }
 
-#gameOver{
-    display: none;
+#gameOver {
+    display: flex;
+    position: absolute;
+    top: 250px;
+    height: 0px;
+    width: 0px;
+    margin-left: 250px;
+    background-color: rgba(0, 0, 0, 0.7); /* Fondo semi-transparente */
+    color: white;
+    font-size: 3rem;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    z-index: 10; /* Para que se muestre sobre el tablero */
 }
 
 .boardInfo {
